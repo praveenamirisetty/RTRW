@@ -8,7 +8,6 @@ on:
     paths:
       - "sql/**"
       - ".github/workflows/snowflake-ci.yml"
-
   workflow_dispatch:
 
 permissions:
@@ -31,6 +30,16 @@ jobs:
         with:
           use-oidc: true
           cli-version: "3.16"
+
+      - name: Validate account configuration
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
+        run: |
+          if [ -z "$SNOWFLAKE_ACCOUNT" ]; then
+            echo "SNOWFLAKE_ACCOUNT is missing."
+            exit 1
+          fi
+          echo "Snowflake account variable is configured."
 
       - name: Test Snowflake connection
         env:
