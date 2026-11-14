@@ -1,0 +1,6 @@
+CREATE DATABASE IF NOT EXISTS RTRW_DB
+COMMENT = 'Returns-to-Refund Financial Reconciliation Warehouse';
+
+USE DATABASE RTRW_DB;
+
+SHOW DATABASES LIKE 'RTRW_DB';

@@ -1,0 +1,38 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Java / Maven
+**/target/
+**/.idea/
+*.iml
+
+# Node / React
+**/node_modules/
+**/dist/
+
+# Python
+**/venv/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+
+# Generated reports and logs
+python/logs/
+python/reports/
+*.log
+
+# IDE and operating system
+.vscode/
+.metadata/
+.DS_Store
+Thumbs.db
+
+# Local configuration
+application-local.properties
