@@ -1,11 +1,8 @@
 
-name: Snowflake CI
+name: Snowflake OIDC CI
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -20,31 +17,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      # 2. Install and configure Snowflake CLI with OIDC
       - name: Configure Snowflake CLI
         uses: snowflakedb/snowflake-actions@v3
         with:
           use-oidc: true
           cli-version: "3.16"
 
-      # 3. Validate account configuration
       - name: Validate account configuration
         env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
         run: |
           if [ -z "$SNOWFLAKE_ACCOUNT" ]; then
-            echo "SNOWFLAKE_ACCOUNT secret is missing"
+            echo "SNOWFLAKE_ACCOUNT repository variable is missing"
             exit 1
           fi
-          echo "Snowflake account configuration exists"
+          echo "Snowflake account variable found"
 
-      # 4. Inspect OIDC claims (never print the token)
       - name: Debug GitHub OIDC claims
         shell: bash
         run: |
@@ -68,15 +61,10 @@ jobs:
               )
 
               for key in [
-                  "iss",
-                  "sub",
-                  "aud",
-                  "repository",
-                  "repository_id",
-                  "repository_owner",
-                  "repository_owner_id",
-                  "ref",
-                  "event_name"
+                  "iss", "sub", "aud",
+                  "repository", "repository_id",
+                  "repository_owner", "repository_owner_id",
+                  "ref", "event_name"
               ]:
                   print(f"{key}: {claims.get(key)}")
 
@@ -85,9 +73,8 @@ jobs:
               sys.exit(1)
           PY
 
-      # 5. Test Snowflake OIDC connection
       - name: Test Snowflake connection
         env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
         run: |
           snow connection test -x
