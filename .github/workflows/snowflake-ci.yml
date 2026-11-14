@@ -1,0 +1,39 @@
+
+name: Snowflake CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "sql/**"
+      - ".github/workflows/snowflake-ci.yml"
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  snowflake-connection:
+    name: Test Snowflake OIDC Connection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configure Snowflake CLI
+        uses: snowflakedb/snowflake-actions@v3
+        with:
+          use-oidc: true
+          cli-version: "3.16"
+
+      - name: Test Snowflake connection
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ vars.SNOWFLAKE_ACCOUNT }}
+        run: |
+          snow connection test -x
