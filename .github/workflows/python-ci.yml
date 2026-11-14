@@ -33,5 +33,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Python tests
-        working-directory: python
-        run: python -m pytest tests/ -v
+        run: python -m pytest python/tests/ -v
